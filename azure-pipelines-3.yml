@@ -1,0 +1,28 @@
+trigger:
+- main  # Adjust this to your branch if needed
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azureSubscription: 'devops-sp'  # Replace with your Azure service connection name
+  keyVaultName: 'testakvs'  # Replace with your Key Vault name
+  secretName: 'nparasa-secret'  # Replace with the name of the secret you want to retrieve
+
+jobs:
+- job: GetKeyVaultSecret
+  displayName: 'Retrieve Secret from Azure Key Vault'
+  steps:
+
+    # Step 1: Get secret from Azure Key Vault
+    - task: AzureKeyVault@2
+      inputs:
+        connectedServiceName: $(azureSubscription)
+        keyVaultName: $(keyVaultName)
+        secretsFilter: $(secretName)
+      name: FetchSecrets
+
+    # Step 2: Use the secret (for example, printing it in logs)
+    - script: |
+        echo "The secret value is $(YOUR_SECRET_NAME)"
+      displayName: 'Show Secret Value'
